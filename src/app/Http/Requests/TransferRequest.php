@@ -1,0 +1,34 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class TransferRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    public function rules(): array
+    {
+        return [
+            'from_user_id' => 'required|integer|exists:users,id',
+            'to_user_id' => 'required|integer|exists:users,id',
+            'amount' => 'required|numeric|min:0.01',
+            'comment' => 'nullable|string|max:255'
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'from_user_id.exists' => 'Sender user not found',
+            'to_user_id.exists' => 'Recipient user not found'
+        ];
+    }
+}

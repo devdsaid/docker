@@ -10,7 +10,7 @@ services:
       - ./src:/var/www/laravel
     depends_on:
       - php
-      - mysql
+      - postgres
 
   php:
     build:
@@ -21,15 +21,14 @@ services:
     command: >
       sh -c "chown -R www-data:www-data /var/www/laravel/storage /var/www/laravel/bootstrap/cache && chmod -R 775 /var/www/laravel/storage /var/www/laravel/bootstrap/cache && php-fpm"
 
-
-  mysql:
-    image: mysql:8.0
+  postgres:
+    image: postgres:15
     ports:
-      - "3316:3306"
+      - "5432:5432"
     volumes:
-      - ./src:/var/www/laravel
+      - postgres_data:/var/lib/postgresql/data
     env_file:
-      - ./env/mysql.env
+      - ./env/postgres.env
 
   composer:
     build:
@@ -38,7 +37,6 @@ services:
     volumes:
       - ./src:/var/www/laravel
 
-
   artisan:
     build:
       context: dockerfiles
@@ -46,3 +44,6 @@ services:
     volumes:
       - ./src:/var/www/laravel
     entrypoint: [ "php","/var/www/laravel/artisan" ]
+
+volumes:
+  postgres_data:
